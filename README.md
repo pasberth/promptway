@@ -8,6 +8,7 @@
 
 * zsh
 * pathf が必要です <https://github.com/pasberth/pathf>
+* 多少buggyでも耐える心
 
 ## Usage
 
@@ -15,13 +16,13 @@
 
 ```sh
 
-  source path/to/promptway/promptway.zsh
+source path/to/promptway/promptway.zsh
 
-  zstyle ':prompt:dir' formats "%B%a%b"
-  zstyle ':prompt:way' formats "%a"
-  zstyle ':prompt:backward' enable t
-  zstyle ':prompt:backward:dir' formats "%U%a%u"
-  zstyle ':prompt:backward:way' formats "%a"
+zstyle ':prompt:dir' formats "%B%a%b"
+zstyle ':prompt:way' formats "%a"
+zstyle ':prompt:backward' enable t
+zstyle ':prompt:backward:dir' formats "%U%a%u"
+zstyle ':prompt:backward:way' formats "%a"
 ```
 
 add-zsh-hook の chpwd とかでプロンプトを更新    
