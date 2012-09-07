@@ -4,6 +4,10 @@
 プロンプトの味気ないパスをかっこ良く表示するよ  
 カレントディレクトリは太字に popd で戻るディレクトリに下線を引いたりできます。  
 
+## Requirements
+
+* zsh
+* pathf が必要です <https://github.com/pasberth/pathf>
 
 ## Usage
 
