@@ -3,13 +3,15 @@
 promptway () {
   _prompt_way=
   local -a _result
-  local -a _wwfmt _wdfmt
-  local -a _is_bwenable _bwdfmt _bwwfmt
+  local -a _wwfmt _wdfmt _wdsymfmt
+  local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
   zstyle -a ":prompt:way" formats _wwfmt
   zstyle -a ":prompt:dir" formats _wdfmt
+  zstyle -a ":prompt:dir:symlink" formats _wdsymfmt
   zstyle -a ":prompt:backward" enable _is_bwenable
   zstyle -a ":prompt:backward:dir" formats _bwdfmt
   zstyle -a ":prompt:backward:way" formats _bwwfmt
+  zstyle -a ":prompt:backward:dir:symlink" formats _bwdsymfmt
 
   local BACKWARD_DIR
   # <---(A)--->                     ~~(a)~~
@@ -43,13 +45,21 @@ promptway () {
   A=$(_promptway_unslash "$WORKING_WAY")
   zformat -f _ww "$_wwfmt" a:"$A"
   A=$(_promptway_unslash "$WORKING_DIR")
-  zformat -f _wd "$_wdfmt" a:"$A"
+  if [ -L $PWD ]; then
+    zformat -f _wd "$_wdsymfmt" a:"$A"
+  else
+    zformat -f _wd "$_wdfmt" a:"$A"
+  fi
 
   _prompt_way="$_prompt_way$_ww"$(_promptway_slash "$WORKING_WAY")
 
   if [[ -n $BACKWARD_UPPER_DIR ]] || [[ -n $BACKWARD_UPPER_WAY ]]; then
     A=$(_promptway_unslash "$BACKWARD_UPPER_DIR")
-    zformat -f _bupd "$_bwdfmt" a:"$A"
+    if [ -L "$BACKWARD_DIR" ]; then
+      zformat -f _bupd "$_bwdsymfmt" a:"$A"
+    else
+      zformat -f _bupd "$_bwdfmt" a:"$A"
+    fi
     A=$(_promptway_unslash "$BACKWARD_UPPER_WAY")
     zformat -f _bupw "$_bwwfmt" a:"$A"
     _prompt_way="$_prompt_way$_bupd"$(_promptway_slash "$BACKWARD_UPPER_DIR")
@@ -62,7 +72,11 @@ promptway () {
     A=$(_promptway_unslash "$BACKWARD_UNDER_WAY")
     zformat -f _budw "$_bwwfmt" a:"$A"
     A=$(_promptway_unslash "$BACKWARD_UNDER_DIR")
-    zformat -f _budd "$_bwdfmt" a:"$A"
+    if [ -L "$BACKWARD_DIR" ]; then
+      zformat -f _budd "$_bwdsymfmt" a:"$A"
+    else
+      zformat -f _budd "$_bwdfmt" a:"$A"
+    fi
     _prompt_way=$_prompt_way$(_promptway_slash "$WORKING_DIR")
     _prompt_way=$_prompt_way$_budw$(_promptway_slash "$BACKWARD_UNDER_WAY")
     _prompt_way=$_prompt_way$_budd

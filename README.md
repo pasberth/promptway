@@ -19,9 +19,11 @@
 source path/to/promptway/promptway.zsh
 
 zstyle ':prompt:dir' formats "%B%a%b"
+zstyle ':prompt:dir:symlink' formats "%B%F{cyan}%a@%f%b"
 zstyle ':prompt:way' formats "%a"
 zstyle ':prompt:backward' enable t
 zstyle ':prompt:backward:dir' formats "%U%a%u"
+zstyle ':prompt:backward:dir:symlink' formats "%U%F{cyan}%a@%f%u"
 zstyle ':prompt:backward:way' formats "%a"
 ```
 
