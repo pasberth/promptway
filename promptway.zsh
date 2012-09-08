@@ -22,39 +22,47 @@ promptway () {
   # C) backward-under-way
   # c) backward-under-dir
   local WORKING_WAY BACKWARD_UPPER_DIR BACKWARD_UPPER_WAY WORKING_DIR BACKWARD_UNDER_WAY BACKWARD_UNDER_DIR
+  local A
 
-  if [[ -n "$_is_bwenable" ]] && [[ -n "${dirstack[1]}" ]]; then
-    BACKWARD_DIR=${dirstack[1]}
-    BACKWARD_UPPER_DIR=$(echo $BACKWARD_DIR | pathf Dtb | _promptway_filter)
-    BACKWARD_UPPER_WAY=$(echo $BACKWARD_DIR | pathf dtB | _promptway_filter)
+  if [[ -n $_is_bwenable ]] && [[ -n ${dirstack[1]} ]]; then
+    BACKWARD_DIR="${dirstack[1]}"
+    BACKWARD_UPPER_DIR=$(echo "$BACKWARD_DIR" | pathf Dtb | _promptway_filter)
+    BACKWARD_UPPER_WAY=$(echo "$BACKWARD_DIR" | pathf dtB | _promptway_filter)
     BACKWARD_UNDER_DIR=$(pwd | pathf dtb "$BACKWARD_DIR" | _promptway_filter)
     BACKWARD_UNDER_WAY=$(pwd | pathf dtB "$BACKWARD_DIR" | _promptway_filter)
   else
     BACKWARD_DIR=
   fi
   WORKING_DIR=$(pathf tb)
-  WORKING_WAY=$(pathf t "${PWD%%$(eval echo $BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR)}" | _promptway_filter)
+  A=${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}
+  WORKING_WAY=$(pathf t "$A" | _promptway_filter)
   WORKING_DIR=$(_promptway_filter "$WORKING_DIR")
 
   local -a _ww _bupd _bupw _wd _budw _budd
 
-  zformat -f _ww "$_wwfmt" a:$(_promptway_unslash "$WORKING_WAY")
-  zformat -f _wd "$_wdfmt" a:$(_promptway_unslash "$WORKING_DIR")
+  A=$(_promptway_unslash "$WORKING_WAY")
+  zformat -f _ww "$_wwfmt" a:"$A"
+  A=$(_promptway_unslash "$WORKING_DIR")
+  zformat -f _wd "$_wdfmt" a:"$A"
 
-  _prompt_way=$_prompt_way$_ww$(_promptway_slash "$WORKING_WAY")
+  _prompt_way="$_prompt_way$_ww"$(_promptway_slash "$WORKING_WAY")
 
   if [[ -n $BACKWARD_UPPER_DIR ]] || [[ -n $BACKWARD_UPPER_WAY ]]; then
-    zformat -f _bupd "$_bwdfmt" a:$(_promptway_unslash "$BACKWARD_UPPER_DIR")
-    zformat -f _bupw "$_bwwfmt" a:$(_promptway_unslash "$BACKWARD_UPPER_WAY")
-    _prompt_way=$_prompt_way$_bupd$(_promptway_slash "$BACKWARD_UPPER_DIR")
-    _prompt_way=$_prompt_way$_bupw$(_promptway_slash "$BACKWARD_UPPER_WAY")
+    A=$(_promptway_unslash "$BACKWARD_UPPER_DIR")
+    zformat -f _bupd "$_bwdfmt" a:"$A"
+    A=$(_promptway_unslash "$BACKWARD_UPPER_WAY")
+    zformat -f _bupw "$_bwwfmt" a:"$A"
+    _prompt_way="$_prompt_way$_bupd"$(_promptway_slash "$BACKWARD_UPPER_DIR")
+    _prompt_way="$_prompt_way$_bupw"$(_promptway_slash "$BACKWARD_UPPER_WAY")
   fi
 
-  _prompt_way=$_prompt_way$_wd
+  _prompt_way="$_prompt_way$_wd"
 
   if [[ -n $BACKWARD_UNDER_WAY ]] || [[ -n $BACKWARD_UNDER_DIR ]]; then
-    zformat -f _budw "$_bwwfmt" a:$(_promptway_unslash "$BACKWARD_UNDER_WAY")
-    zformat -f _budd "$_bwdfmt" a:$(_promptway_unslash "$BACKWARD_UNDER_DIR")
+    A=$(_promptway_unslash "$BACKWARD_UNDER_WAY")
+    zformat -f _budw "$_bwwfmt" a:"$A"
+    A=$(_promptway_unslash "$BACKWARD_UNDER_DIR")
+    zformat -f _budd "$_bwdfmt" a:"$A"
     _prompt_way=$_prompt_way$(_promptway_slash "$WORKING_DIR")
     _prompt_way=$_prompt_way$_budw$(_promptway_slash "$BACKWARD_UNDER_WAY")
     _prompt_way=$_prompt_way$_budd
@@ -77,6 +85,7 @@ _promptway_backward () {
 
   local relapath dirname basename WORKING_DIR BACKWARD_DIR
   local _budw _budd
+  local A
 
   if [ $# -eq 0 ]; then
     WORKING_DIR=$PWD
@@ -87,18 +96,20 @@ _promptway_backward () {
     return 0
   fi
 
-  relapath=`realpath --no-symlinks --relative-to=$WORKING_DIR "$BACKWARD_DIR"`
+  relapath=`realpath --no-symlinks --relative-to="$WORKING_DIR" "$BACKWARD_DIR"`
   case $relapath in
     *../*)
       case ${relapath##*../} in
         . | ..)
           return 0;;
         *)
-          dirname=$(pathf Bt $BACKWARD_DIR)
+          dirname=$(pathf Bt "$BACKWARD_DIR")
           dirname=${dirname%%/}
-          basename=$(pathf bt $BACKWARD_DIR)
-	  zformat -f _budw "$_bwwfmt" a:$(_promptway_unslash "$dirname")
-	  zformat -f _budd "$_bwdfmt" a:$(_promptway_unslash "$basename")
+          basename=$(pathf bt "$BACKWARD_DIR")
+	  A=$(_promptway_unslash "$dirname")
+	  zformat -f _budw "$_bwwfmt" a:"$A"
+	  A=$(_promptway_unslash "$basename")
+	  zformat -f _budd "$_bwdfmt" a:"$A"
 	  _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd
     esac;;
   esac
@@ -116,7 +127,7 @@ _promptway_filter () {
   if [ -n "$w" ] && \
      [ "$w" != "." ] && \
      [ "$w" != "/" ]; then
-    echo $w/
+    echo "$w/"
   elif [ "$w" = "/" ]; then
     echo /
   else
@@ -136,7 +147,7 @@ _promptway_unslash () {
   if [ "$w" = "/" ]; then
     echo /
   else
-    echo ${w%%/}
+    echo "${w%%/}"
   fi
 }
 
