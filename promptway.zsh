@@ -35,7 +35,7 @@ promptway () {
   else
     BACKWARD_DIR=
   fi
-  WORKING_DIR=$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY" | pathf dtb)
+  WORKING_DIR=$(echo "$BACKWARD_DIR" | pathf D | pathf dtb)
   A=${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}
   WORKING_WAY=$(pathf t "$A" | _promptway_filter)
   WORKING_DIR=$(_promptway_filter "$WORKING_DIR")
