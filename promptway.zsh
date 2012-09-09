@@ -35,7 +35,7 @@ promptway () {
   else
     BACKWARD_DIR=
   fi
-  WORKING_DIR=$(pathf tb)
+  WORKING_DIR=$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY" | pathf dtb)
   A=${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}
   WORKING_WAY=$(pathf t "$A" | _promptway_filter)
   WORKING_DIR=$(_promptway_filter "$WORKING_DIR")
@@ -117,8 +117,7 @@ _promptway_backward () {
         . | ..)
           return 0;;
         *)
-          dirname=$(pathf Bt "$BACKWARD_DIR")
-          dirname=${dirname%%/}
+          dirname=$(pathf Bt "$BACKWARD_DIR" | _promptway_filter)
           basename=$(pathf bt "$BACKWARD_DIR")
 	  A=$(_promptway_unslash "$dirname")
 	  zformat -f _budw "$_bwwfmt" a:"$A"
