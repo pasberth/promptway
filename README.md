@@ -2,7 +2,9 @@
 ## なにこれ
 
 プロンプトの味気ないパスをかっこ良く表示するよ  
-カレントディレクトリは太字に popd で戻るディレクトリに下線を引いたりできます。  
+カレントディレクトリは太字に popd で戻るディレクトリに下線を引いたりできます。 
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/promptway.png) 
 
 ## Requirements
 
