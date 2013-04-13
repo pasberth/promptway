@@ -110,7 +110,12 @@ _promptway_backward () {
     return 0
   fi
 
-  relapath=`realpath --no-symlinks --relative-to="$WORKING_DIR" "$BACKWARD_DIR"`
+  if which grealpath > /dev/null 2>&1; then
+    relapath=`grealpath --no-symlinks --relative-to="$WORKING_DIR" "$BACKWARD_DIR"`
+  else
+    relapath=`realpath --no-symlinks --relative-to="$WORKING_DIR" "$BACKWARD_DIR"`
+  fi
+
   case $relapath in
     *../*)
       case ${relapath##*../} in
