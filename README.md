@@ -35,13 +35,28 @@ add-zsh-hook の chpwd とかでプロンプトを更新
 ```sh
 
 setopt prompt_subst
-PROMPT='$PROMTPT_WAY'
-
-function _update_prompt_way () {
-  promptway
-  PROMPT_WAY=$_prompt_way
-}
+PROMPT='$_prompt_way'
 
 autoload -U add-zsh-hook
-add-zsh-hook chpwd _update_prompt_way
+add-zsh-hook chpwd promptway
+
+promptway # Initializes $_prompt_way first.
+```
+
+たとえば `~/Documents` から `~/Downloads` に移動した場合、 `$_prompt_backward` に情報が入ります。つまり `~/Documents` に `popd` で戻れるディレクトリの位置が保存されます。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/promptbackward.png)
+
+```sh
+setopt prompt_subst
+PROMPT='$(_print_promptway)'
+
+function _print_promptway () {
+  if [ -n "$_prompt_backward" ]; then
+    echo ',-- '$_prompt_backward
+    echo '`-> '$_prompt_way
+  else
+    echo '   ['$_prompt_way']'
+  fi
+}
 ```
