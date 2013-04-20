@@ -45,7 +45,7 @@ promptway () {
   A=$(_promptway_unslash "$WORKING_WAY")
   zformat -f _ww "$_wwfmt" a:"$A"
   A=$(_promptway_unslash "$WORKING_DIR")
-  if [ -L $PWD ]; then
+  if [[ -L $PWD ]]; then
     zformat -f _wd "$_wdsymfmt" a:"$A"
   else
     zformat -f _wd "$_wdfmt" a:"$A"
