@@ -27,6 +27,25 @@ zstyle ':prompt:backward' enable t
 zstyle ':prompt:backward:dir' formats "%U%a%u"
 zstyle ':prompt:backward:dir:symlink' formats "%U%F{cyan}%a@%f%u"
 zstyle ':prompt:backward:way' formats "%a"
+
+## パス省略表示
+# 省略記号 (default: ...)
+#zstyle ':prompt:truncate' symbol '… '
+
+# パス最大長 (default: 30)
+#zstyle ':prompt:truncate' max_length 40
+
+# カレントディレクトリの親ディレクトリを表示する (default: no)
+zstyle ":prompt:truncate" show_working_parent yes
+
+# 前ディレクトリの親ディレクトリを表示する (default: no)
+# zstyle ":prompt:truncate" show_backward_parent yes
+
+# "/" 直下のディレクトリを表示する (default: no)
+zstyle ":prompt:truncate" show_slash_second_root yes
+
+# "~/" 直下のディレクトリを表示する (default: no)
+zstyle ":prompt:truncate" show_home_second_root yes
 ```
 
 add-zsh-hook の chpwd とかでプロンプトを更新    

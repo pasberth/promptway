@@ -5,6 +5,9 @@ promptway () {
   local -a _result
   local -a _wwfmt _wdfmt _wdsymfmt
   local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
+  local  _way _dir_slash _way_slash _symbol _max_length \
+    _show_working_parent _show_backward_parent \
+    _show_slash_second_root _show_home_second_root
   zstyle -a ":prompt:way" formats _wwfmt
   zstyle -a ":prompt:dir" formats _wdfmt
   zstyle -a ":prompt:dir:symlink" formats _wdsymfmt
@@ -12,6 +15,15 @@ promptway () {
   zstyle -a ":prompt:backward:dir" formats _bwdfmt
   zstyle -a ":prompt:backward:way" formats _bwwfmt
   zstyle -a ":prompt:backward:dir:symlink" formats _bwdsymfmt
+  zstyle -s ":prompt:truncate" symbol _symbol
+  zstyle -s ":prompt:truncate" max_length _max_length
+  zstyle -b ":prompt:truncate" show_working_parent _show_working_parent
+  zstyle -b ":prompt:truncate" show_backward_parent _show_backward_parent
+  zstyle -b ":prompt:truncate" show_slash_second_root _show_slash_second_root
+  zstyle -b ":prompt:truncate" show_home_second_root _show_home_second_root
+
+  _symbol=${_symbol:-...}
+  _max_length=${_max_length:-30}
 
   local BACKWARD_DIR
   # <---(A)--->                     ~~(a)~~
@@ -62,13 +74,21 @@ promptway () {
     fi
     A=$(_promptway_unslash "$BACKWARD_UPPER_WAY")
     zformat -f _bupw "$_bwwfmt" a:"$A"
-    _prompt_way="$_prompt_way$_bupd"$(_promptway_slash "$BACKWARD_UPPER_DIR")
-    _prompt_way="$_prompt_way$_bupw"$(_promptway_slash "$BACKWARD_UPPER_WAY")
-  fi
 
-  _prompt_way="$_prompt_way$_wd"
+    _way=$_prompt_way
+    _dir_slash=$(_promptway_slash "$BACKWARD_UPPER_DIR")
+    _way_slash=$(_promptway_slash "$BACKWARD_UPPER_WAY")
 
-  if [[ -n $BACKWARD_UNDER_WAY ]] || [[ -n $BACKWARD_UNDER_DIR ]]; then
+    _prompt_way="$_prompt_way$_bupd$_dir_slash$_bupw$_way_slash$_wd"
+
+    if _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
+      _bupw=$(_promptway_truncate "$_bupw" "$_symbol" \
+        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
+      _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
+        "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
+      _prompt_way="$_prompt_way$_bupd$_dir_slash$_bupw$_way_slash$_wd"
+    fi
+  elif [[ -n $BACKWARD_UNDER_WAY ]] || [[ -n $BACKWARD_UNDER_DIR ]]; then
     A=$(_promptway_unslash "$BACKWARD_UNDER_WAY")
     zformat -f _budw "$_bwwfmt" a:"$A"
     A=$(_promptway_unslash "$BACKWARD_UNDER_DIR")
@@ -77,13 +97,96 @@ promptway () {
     else
       zformat -f _budd "$_bwdfmt" a:"$A"
     fi
-    _prompt_way=$_prompt_way$(_promptway_slash "$WORKING_DIR")
-    _prompt_way=$_prompt_way$_budw$(_promptway_slash "$BACKWARD_UNDER_WAY")
-    _prompt_way=$_prompt_way$_budd
+
+    _way=$_prompt_way
+    _dir_slash=$(_promptway_slash "$WORKING_DIR")
+    _way_slash=$(_promptway_slash "$BACKWARD_UNDER_WAY")
+
+    _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd"
     # _prompt_way=$_prompt_way_$(_promptway_slash "$BACKWARD_UNDER_DIR")
+
+    if _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
+      _budw=$(_promptway_truncate "$_budw" "$_symbol" \
+        "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
+      _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
+        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
+      _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd"
+    fi
+  else
+    _way=$_prompt_way
+    _prompt_way="$_prompt_way$_wd"
+    if _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
+      _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
+        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
+      _prompt_way="$_prompt_way$_wd"
+    fi
   fi
 
   _promptway_backward
+}
+
+_promptway_path_length() {
+  if [[ -z $1 ]]; then
+    echo 0
+  fi
+  local p
+  p=$(echo -E "$1" | sed -e 's/%[^%]{[^}]*}//g' -e 's/%[^%]//g')
+  echo ${#p}
+}
+
+_promptway_is_max_length_over() {
+  if [[ $(_promptway_path_length "$1") -gt $2 ]]; then
+    return 0
+  fi
+  return 1
+}
+
+_promptway_truncate() {
+  local _path="$1"
+  if [[ -z $_path ]]; then
+    return
+  fi
+  local symbol="$2"
+  local show_base="$3"
+  local show_slash_root="$4"
+  local show_home_root="$5"
+
+  local prefix suffix
+
+  if [[ $_path != ${_path%/} ]]; then
+    suffix='/'
+    _path=${_path%/}
+  fi
+
+  if [[ $_path != ${_path#/} ]]; then
+    prefix='/'
+    _path=${_path#/}
+  elif [[ $_path != ${_path#\~/} ]]; then
+    prefix='~/'
+    _path=${_path#\~/}
+  fi
+
+  if [[ $show_slash_root == 'yes' && $prefix == '/' \
+    || $show_home_root == 'yes' && $prefix == '~/'  ]]; then
+    if [[ $_path =~ '/' ]]; then
+      prefix+="${_path%%/*}/"
+      _path=${_path#*/}
+    else
+      prefix+=$_path
+      _path=
+    fi
+  fi
+
+  base=${_path:t}
+  if [[ $show_base != 'yes' && \
+      ( $base != $_path || ${#base} > ${#symbol} ) ]]; then
+    base=
+  fi
+  if [[ $_path != $base ]]; then
+    _path="$symbol${base:+/}${base}"
+  fi
+
+  echo -E "${prefix}${_path}${suffix}"
 }
 
 _promptway_backward () {
