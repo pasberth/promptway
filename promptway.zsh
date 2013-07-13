@@ -5,7 +5,7 @@ promptway () {
   local -a _result
   local -a _wwfmt _wdfmt _wdsymfmt
   local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
-  local  _way _dir_slash _way_slash _symbol _max_length \
+  local  _way _dir_slash _way_slash _is_truncate _symbol _max_length \
     _show_working_parent _show_backward_parent \
     _show_slash_second_root _show_home_second_root
   zstyle -a ":prompt:way" formats _wwfmt
@@ -15,6 +15,7 @@ promptway () {
   zstyle -a ":prompt:backward:dir" formats _bwdfmt
   zstyle -a ":prompt:backward:way" formats _bwwfmt
   zstyle -a ":prompt:backward:dir:symlink" formats _bwdsymfmt
+  zstyle -a ":prompt:truncate" enable _is_truncate
   zstyle -s ":prompt:truncate" symbol _symbol
   zstyle -s ":prompt:truncate" max_length _max_length
   zstyle -b ":prompt:truncate" show_working_parent _show_working_parent
@@ -81,7 +82,8 @@ promptway () {
 
     _prompt_way="$_prompt_way$_bupd$_dir_slash$_bupw$_way_slash$_wd"
 
-    if _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
+    if [[ -n $_is_truncate ]] \
+      && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
       _bupw=$(_promptway_truncate "$_bupw" "$_symbol" \
         "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
@@ -105,7 +107,8 @@ promptway () {
     _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd"
     # _prompt_way=$_prompt_way_$(_promptway_slash "$BACKWARD_UNDER_DIR")
 
-    if _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
+    if [[ -n $_is_truncate ]] \
+      && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
       _budw=$(_promptway_truncate "$_budw" "$_symbol" \
         "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
@@ -115,7 +118,8 @@ promptway () {
   else
     _way=$_prompt_way
     _prompt_way="$_prompt_way$_wd"
-    if _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
+    if [[ -n $_is_truncate ]] \
+      && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
         "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
       _prompt_way="$_prompt_way$_wd"
