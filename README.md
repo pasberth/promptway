@@ -1,10 +1,10 @@
 
 ## なにこれ
 
-プロンプトの味気ないパスをかっこ良く表示するよ  
-カレントディレクトリは太字に popd で戻るディレクトリに下線を引いたりできます。 
+プロンプトの味気ないパスをかっこ良く表示するよ
+カレントディレクトリは太字に popd で戻るディレクトリに下線を引いたりできます。
 
-![Demo](https://raw.github.com/pasberth/promptway/master/demo/promptway.png) 
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/promptway.png)
 
 ## Requirements
 
@@ -51,8 +51,8 @@ zstyle ":prompt:truncate" show_slash_second_root t
 zstyle ":prompt:truncate" show_home_second_root t
 ```
 
-add-zsh-hook の chpwd とかでプロンプトを更新    
-`promptway` 関数を呼ぶと `$_prompt_way` ってグローバル変数に情報が入ります。  
+add-zsh-hook の chpwd とかでプロンプトを更新
+`promptway` 関数を呼ぶと `$_prompt_way` ってグローバル変数に情報が入ります。
 
 ```sh
 

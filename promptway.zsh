@@ -231,12 +231,12 @@ _promptway_backward () {
         *)
           dirname=$(pathf Bt "$BACKWARD_DIR" | _promptway_filter)
           basename=$(pathf bt "$BACKWARD_DIR")
-	  A=$(_promptway_unslash "$dirname")
-	  zformat -f _budw "$_bwwfmt" a:"$A"
-	  A=$(_promptway_unslash "$basename")
-	  zformat -f _budd "$_bwdfmt" a:"$A"
-	  _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd
-    esac;;
+          A=$(_promptway_unslash "$dirname")
+          zformat -f _budw "$_bwwfmt" a:"$A"
+          A=$(_promptway_unslash "$basename")
+          zformat -f _budd "$_bwdfmt" a:"$A"
+          _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd
+      esac;;
   esac
 }
 
