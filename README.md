@@ -38,17 +38,17 @@ zstyle ':prompt:truncate' enable t
 # パス最大長 (default: 30)
 #zstyle ':prompt:truncate' max_length 40
 
-# カレントディレクトリの親ディレクトリを表示する (default: no)
-zstyle ":prompt:truncate" show_working_parent yes
+# カレントディレクトリの親ディレクトリを表示する (default: 無効)
+zstyle ":prompt:truncate" show_working_parent t
 
-# 前ディレクトリの親ディレクトリを表示する (default: no)
-# zstyle ":prompt:truncate" show_backward_parent yes
+# 前ディレクトリの親ディレクトリを表示する (default: 無効)
+#zstyle ":prompt:truncate" show_backward_parent t
 
-# "/" 直下のディレクトリを表示する (default: no)
-zstyle ":prompt:truncate" show_slash_second_root yes
+# "/" 直下のディレクトリを表示する (default: 無効)
+zstyle ":prompt:truncate" show_slash_second_root t
 
-# "~/" 直下のディレクトリを表示する (default: no)
-zstyle ":prompt:truncate" show_home_second_root yes
+# "~/" 直下のディレクトリを表示する (default: 無効)
+zstyle ":prompt:truncate" show_home_second_root t
 ```
 
 add-zsh-hook の chpwd とかでプロンプトを更新    

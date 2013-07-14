@@ -18,10 +18,10 @@ promptway () {
   zstyle -a ":prompt:truncate" enable _is_truncate
   zstyle -s ":prompt:truncate" symbol _symbol
   zstyle -s ":prompt:truncate" max_length _max_length
-  zstyle -b ":prompt:truncate" show_working_parent _show_working_parent
-  zstyle -b ":prompt:truncate" show_backward_parent _show_backward_parent
-  zstyle -b ":prompt:truncate" show_slash_second_root _show_slash_second_root
-  zstyle -b ":prompt:truncate" show_home_second_root _show_home_second_root
+  zstyle -a ":prompt:truncate" show_working_parent _show_working_parent
+  zstyle -a ":prompt:truncate" show_backward_parent _show_backward_parent
+  zstyle -a ":prompt:truncate" show_slash_second_root _show_slash_second_root
+  zstyle -a ":prompt:truncate" show_home_second_root _show_home_second_root
 
   _symbol=${_symbol:-...}
   _max_length=${_max_length:-30}
@@ -170,8 +170,8 @@ _promptway_truncate() {
     _path=${_path#\~/}
   fi
 
-  if [[ $show_slash_root == 'yes' && $prefix == '/' \
-    || $show_home_root == 'yes' && $prefix == '~/'  ]]; then
+  if [[ -n $show_slash_root && $prefix == '/' \
+    || -n $show_home_root && $prefix == '~/'  ]]; then
     if [[ $_path =~ '/' ]]; then
       prefix+="${_path%%/*}/"
       _path=${_path#*/}
@@ -182,7 +182,7 @@ _promptway_truncate() {
   fi
 
   base=${_path:t}
-  if [[ $show_base != 'yes' && \
+  if [[ -z $show_base && \
       ( $base != $_path || ${#base} > ${#symbol} ) ]]; then
     base=
   fi
