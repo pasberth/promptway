@@ -204,7 +204,7 @@ _promptway_backward () {
     return 0
   fi
 
-  local relapath dirname basename WORKING_DIR BACKWARD_DIR
+  local dirname basename WORKING_DIR BACKWARD_DIR
   local _budw _budd
   local A
 
@@ -217,27 +217,18 @@ _promptway_backward () {
     return 0
   fi
 
-  if which grealpath > /dev/null 2>&1; then
-    relapath=`grealpath --no-symlinks --relative-to="$WORKING_DIR" "$BACKWARD_DIR"`
-  else
-    relapath=`realpath --no-symlinks --relative-to="$WORKING_DIR" "$BACKWARD_DIR"`
+  if [[ $WORKING_DIR != ${WORKING_DIR#${BACKWARD_DIR%/}/} \
+    || $BACKWARD_DIR != ${BACKWARD_DIR#${WORKING_DIR%/}/} ]]; then
+    return 0
   fi
 
-  case $relapath in
-    *../*)
-      case ${relapath##*../} in
-        . | ..)
-          return 0;;
-        *)
-          dirname=$(pathf Bt "$BACKWARD_DIR" | _promptway_filter)
-          basename=$(pathf bt "$BACKWARD_DIR")
-          A=$(_promptway_unslash "$dirname")
-          zformat -f _budw "$_bwwfmt" a:"$A"
-          A=$(_promptway_unslash "$basename")
-          zformat -f _budd "$_bwdfmt" a:"$A"
-          _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd
-      esac;;
-  esac
+  dirname=$(pathf Bt "$BACKWARD_DIR" | _promptway_filter)
+  basename=$(pathf bt "$BACKWARD_DIR")
+  A=$(_promptway_unslash "$dirname")
+  zformat -f _budw "$_bwwfmt" a:"$A"
+  A=$(_promptway_unslash "$basename")
+  zformat -f _budd "$_bwdfmt" a:"$A"
+  _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd
 }
 
 _promptway_filter () {
