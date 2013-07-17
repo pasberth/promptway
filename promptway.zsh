@@ -1,7 +1,7 @@
 # -*- sh -*-
 
 if ! which pathf > /dev/null 2>&1 ; then
-  alias pathf=`dirname $0`/.vendor/pathf/bin/pathf
+  alias pathf=`dirname $0(:A)`/.vendor/pathf/bin/pathf
 fi
 
 promptway () {

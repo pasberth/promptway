@@ -9,8 +9,15 @@
 ## Requirements
 
 * zsh
-* pathf が必要です <https://github.com/pasberth/pathf>
 * 多少buggyでも耐える心
+
+## Installation
+
+```sh
+git clone git://github.com/pasberth/promptway.git --recursive
+cd promptway
+source promptway.zsh
+```
 
 ## Usage
 
