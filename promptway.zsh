@@ -1,5 +1,9 @@
 # -*- sh -*-
 
+if ! which pathf > /dev/null 2>&1 ; then
+  alias pathf=`dirname $0`/.vendor/pathf/bin/pathf
+fi
+
 promptway () {
   _prompt_way=
   local -a _result
