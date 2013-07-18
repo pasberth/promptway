@@ -18,8 +18,13 @@ if [[ -z $_cmd_pathf ]]; then
 fi
 
 if ! whence -p "$_cmd_pathf" > /dev/null 2>&1; then
+  echo "[$0:t] ERROR: pathf command not found: $_cmd_pathf" 1>&2
+  echo "[$0:t] Please install patfh (https://github.com/pasberth/pathf)." 1>&2
+  echo "[$0:t]   cd promptway && git submodule update --init" 1>&2
+  echo "[$0:t]     or" 1>&2
+  echo "[$0:t]   git clone git://github.com/pasberth/promptway.git --recursive" 1>&2
   promptway () {
-    _prompt_way=
+    _prompt_way='%F{red}???%f'
     return 1
   }
   unset _cmd_pathf
