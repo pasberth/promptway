@@ -1,17 +1,41 @@
 # -*- sh -*-
 
-if ! which pathf > /dev/null 2>&1 ; then
-  alias pathf=`dirname $0(:A)`/.vendor/pathf/bin/pathf
+zstyle -s "prompt:pathf" path _cmd_pathf
+if [[ -z $_cmd_pathf ]]; then
+  _cmd_pathf=$(whence -p pathf)
+  if [[ -z $_cmd_pathf ]]; then
+    if ! (( $+functions[is-at-least] )); then
+      autoload -U is-at-least
+    fi
+    if is-at-least 4.3.10; then
+      _cmd_pathf="${${funcsourcetrace[1]%:*}:A:h}"
+    else
+      _cmd_pathf="$(cd "${${funcsourcetrace[1]%:*}:h}" > /dev/null 2>&1 && pwd)"
+    fi
+    _cmd_pathf="${_cmd_pathf}/.vendor/pathf/bin/pathf"
+  fi
+  zstyle "prompt:pathf" path "$_cmd_pathf"
 fi
+
+if ! whence -p "$_cmd_pathf" > /dev/null 2>&1; then
+  promptway () {
+    _prompt_way=
+    return 1
+  }
+  unset _cmd_pathf
+  return 1
+fi
+unset _cmd_pathf
 
 promptway () {
   _prompt_way=
   local -a _result
   local -a _wwfmt _wdfmt _wdsymfmt
   local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
-  local  _way _dir_slash _way_slash _is_truncate _symbol _max_length \
+  local _cmd_pathf _way _dir_slash _way_slash _is_truncate _symbol _max_length \
     _show_working_parent _show_backward_parent \
     _show_slash_second_root _show_home_second_root
+  zstyle -s "prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:way" formats _wwfmt
   zstyle -a ":prompt:dir" formats _wdfmt
   zstyle -a ":prompt:dir:symlink" formats _wdsymfmt
@@ -45,16 +69,16 @@ promptway () {
 
   if [[ -n $_is_bwenable ]] && [[ -n ${dirstack[1]} ]]; then
     BACKWARD_DIR="${dirstack[1]}"
-    BACKWARD_UPPER_DIR=$(echo "$BACKWARD_DIR" | pathf Dtb | _promptway_filter)
-    BACKWARD_UPPER_WAY=$(echo "$BACKWARD_DIR" | pathf dtB | _promptway_filter)
-    BACKWARD_UNDER_DIR=$(pwd | pathf dtb "$BACKWARD_DIR" | _promptway_filter)
-    BACKWARD_UNDER_WAY=$(pwd | pathf dtB "$BACKWARD_DIR" | _promptway_filter)
+    BACKWARD_UPPER_DIR=$(echo "$BACKWARD_DIR" | "$_cmd_pathf" Dtb | _promptway_filter)
+    BACKWARD_UPPER_WAY=$(echo "$BACKWARD_DIR" | "$_cmd_pathf" dtB | _promptway_filter)
+    BACKWARD_UNDER_DIR=$(pwd | "$_cmd_pathf" dtb "$BACKWARD_DIR" | _promptway_filter)
+    BACKWARD_UNDER_WAY=$(pwd | "$_cmd_pathf" dtB "$BACKWARD_DIR" | _promptway_filter)
   else
     BACKWARD_DIR=
   fi
-  WORKING_DIR=$(echo "$BACKWARD_DIR" | pathf D | pathf dtb)
+  WORKING_DIR=$(echo "$BACKWARD_DIR" | "$_cmd_pathf" D | "$_cmd_pathf" dtb)
   A=${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}
-  WORKING_WAY=$(pathf t "$A" | _promptway_filter)
+  WORKING_WAY=$("$_cmd_pathf" t "$A" | _promptway_filter)
   WORKING_DIR=$(_promptway_filter "$WORKING_DIR")
 
   local -a _ww _bupd _bupw _wd _budw _budd
@@ -199,7 +223,9 @@ _promptway_truncate() {
 
 _promptway_backward () {
   _prompt_backward=
+  local _cmd_pathf
   local -a _is_bwenable _bwdfmt _bwwfmt
+  zstyle -s "prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:backward" enable _is_bwenable
   zstyle -a ":prompt:backward:dir" formats _bwdfmt
   zstyle -a ":prompt:backward:way" formats _bwwfmt
@@ -226,8 +252,8 @@ _promptway_backward () {
     return 0
   fi
 
-  dirname=$(pathf Bt "$BACKWARD_DIR" | _promptway_filter)
-  basename=$(pathf bt "$BACKWARD_DIR")
+  dirname=$("$_cmd_pathf" Bt "$BACKWARD_DIR" | _promptway_filter)
+  basename=$("$_cmd_pathf" bt "$BACKWARD_DIR")
   A=$(_promptway_unslash "$dirname")
   zformat -f _budw "$_bwwfmt" a:"$A"
   A=$(_promptway_unslash "$basename")
