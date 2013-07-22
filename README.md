@@ -24,9 +24,6 @@ source promptway.zsh
 まずは設定をする
 
 ```sh
-
-source path/to/promptway/promptway.zsh
-
 zstyle ':prompt:dir' formats "%B%a%b"
 zstyle ':prompt:dir:symlink' formats "%B%F{cyan}%a@%f%b"
 zstyle ':prompt:way' formats "%a"
@@ -56,20 +53,17 @@ zstyle ":prompt:truncate" show_slash_second_root t
 
 # "~/" 直下のディレクトリを表示する (default: 無効)
 zstyle ":prompt:truncate" show_home_second_root t
+
+## Source promptway.zsh
+# zstyle による設定後に読み込むこと
+source path/to/promptway/promptway.zsh
 ```
 
-add-zsh-hook の chpwd とかでプロンプトを更新
-`promptway` 関数を呼ぶと `$_prompt_way` ってグローバル変数に情報が入ります。
+`$_prompt_way` 変数にパス情報が設定されるので、`PROMPT` などに設定して利用します。
 
 ```sh
-
 setopt prompt_subst
 PROMPT='$_prompt_way'
-
-autoload -U add-zsh-hook
-add-zsh-hook chpwd promptway
-
-promptway # Initializes $_prompt_way first.
 ```
 
 たとえば `~/Documents` から `~/Downloads` に移動した場合、 `$_prompt_backward` に情報が入ります。つまり `~/Documents` に `popd` で戻れるディレクトリの位置が保存されます。

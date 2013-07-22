@@ -320,3 +320,10 @@ _promptway_slash () {
     echo ""
   fi
 }
+
+if ! (( $+functions[add-zsh-hook] )); then
+  autoload -U add-zsh-hook
+fi
+add-zsh-hook chpwd promptway
+
+promptway
