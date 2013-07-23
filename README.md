@@ -24,6 +24,10 @@ source promptway.zsh
 まずは設定をする
 
 ```sh
+## Source promptway.zsh
+# zstyle による設定前に読み込むこと
+source path/to/promptway/promptway.zsh
+
 zstyle ':prompt:dir' formats "%B%a%b"
 zstyle ':prompt:dir:symlink' formats "%B%F{cyan}%a@%f%b"
 zstyle ':prompt:way' formats "%a"
@@ -53,10 +57,6 @@ zstyle ":prompt:truncate" show_slash_second_root t
 
 # "~/" 直下のディレクトリを表示する (default: 無効)
 zstyle ":prompt:truncate" show_home_second_root t
-
-## Source promptway.zsh
-# zstyle による設定後に読み込むこと
-source path/to/promptway/promptway.zsh
 ```
 
 `$_prompt_way` 変数にパス情報が設定されるので、`PROMPT` などに設定して利用します。
