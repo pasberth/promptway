@@ -12,7 +12,7 @@ if [[ -z $_cmd_pathf ]]; then
     else
       _cmd_pathf="$(cd "${${funcsourcetrace[1]%:*}:h}" > /dev/null 2>&1 && pwd)"
     fi
-    _cmd_pathf="${_cmd_pathf}/.vendor/pathf/bin/pathf"
+    _cmd_pathf="${_cmd_pathf}/../.vendor/pathf/bin/pathf"
   fi
   zstyle "prompt:pathf" path "$_cmd_pathf"
 fi
