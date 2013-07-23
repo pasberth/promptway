@@ -12,7 +12,7 @@ if [[ -z $_cmd_pathf ]]; then
     else
       _cmd_pathf="$(cd "${${funcsourcetrace[1]%:*}:h}" > /dev/null 2>&1 && pwd)"
     fi
-    _cmd_pathf="${_cmd_pathf}/../.vendor/pathf/bin/pathf"
+    _cmd_pathf="${_cmd_pathf}/.vendor/pathf/bin/pathf"
   fi
   zstyle "prompt:pathf" path "$_cmd_pathf"
 fi
@@ -24,7 +24,7 @@ if ! whence -p "$_cmd_pathf" > /dev/null 2>&1; then
   echo "[$0:t]     or" 1>&2
   echo "[$0:t]   git clone git://github.com/pasberth/promptway.git --recursive" 1>&2
   promptway () {
-    _prompt_way='%F{red}???%f'
+    _prompt_way='%F{red}%~%f'
     return 1
   }
   unset _cmd_pathf
