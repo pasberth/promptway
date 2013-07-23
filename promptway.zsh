@@ -1,13 +1,34 @@
 source `dirname $0`/lib/promptway.zsh
 
-## TODO: 各項目の説明
-#
+## Working directory
+# Format of working directory.
+# %a := `basename $PWD`
 zstyle ':prompt:dir' formats "%B%a%b"
+
+# Format of working directory (when it is a symlink).
+# %a := `basename $PWD`
 zstyle ':prompt:dir:symlink' formats "%B%F{cyan}%a@%f%b"
+
+## Working way
+# Format of path between `/' and working directory.
+# %a := path between `/' and working directory
 zstyle ':prompt:way' formats "%a"
+
+# TODO
 zstyle ':prompt:backward' enable t
+
+## Backward directory
+# Format of backward directory.
+# %a := `basename $dirstack[1]`
 zstyle ':prompt:backward:dir' formats "%U%a%u"
+
+# Format of backward directory (when it is a symlink).
+# %a := `basename $dirstack[1]`
 zstyle ':prompt:backward:dir:symlink' formats "%U%F{cyan}%a@%f%u"
+
+## Backward way
+# Format of path between working directory and backward-directory.
+# %a := path between working directory and backward-directory
 zstyle ':prompt:backward:way' formats "%a"
 
 ## パス省略表示
