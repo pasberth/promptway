@@ -12,7 +12,7 @@ zstyle ':prompt:backward:way' formats "%a"
 
 ## パス省略表示
 # パス省略を有効 (default: 無効)
-zstyle ':prompt:truncate' enable t
+zstyle ':prompt:truncate' enable ""
 
 # 省略記号 (default: ...)
 zstyle ':prompt:truncate' symbol '...'
