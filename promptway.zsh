@@ -24,7 +24,7 @@ if ! whence -p "$_cmd_pathf" > /dev/null 2>&1; then
   echo "[$0:t]     or" 1>&2
   echo "[$0:t]   git clone git://github.com/pasberth/promptway.git --recursive" 1>&2
   promptway () {
-    _prompt_way='%F{red}???%f'
+    _prompt_way='%F{red}%~%f'
     return 1
   }
   unset _cmd_pathf
