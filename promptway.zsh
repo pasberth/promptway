@@ -1,4 +1,4 @@
-source `dirname $0`/lib/promptway.zsh
+source "`dirname "$0"`/lib/promptway.zsh"
 
 ## Working directory
 # Format of working directory.
