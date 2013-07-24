@@ -216,7 +216,7 @@ _promptway_truncate() {
 
   base=${_path:t}
   if [[ -z $show_base && \
-      ( $base != $_path || ${#base} > ${#symbol} ) ]]; then
+      ( $base != $_path || ${#base} -gt ${#symbol} ) ]]; then
     base=
   fi
   if [[ $_path != $base ]]; then
