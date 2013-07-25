@@ -36,9 +36,10 @@ promptway () {
   _prompt_way=
   local -a _result
   local -a _wwfmt _wdfmt _wdsymfmt
-  local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
-  local _cmd_pathf _way _dir_slash _way_slash _is_truncate _symbol _max_length \
-    _show_working_parent _show_backward_parent \
+  local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt _pdfmt _pbfmt
+  local _cmd_pathf _way _bperm _dir_slash _way_slash \
+    _is_truncate _symbol _max_length \
+    _show_working_parent _show_backward_parent _pdsymbol _pbsymbol \
     _show_slash_second_root _show_home_second_root
   zstyle -s "prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:way" formats _wwfmt
@@ -55,6 +56,10 @@ promptway () {
   zstyle -a ":prompt:truncate" show_backward_parent _show_backward_parent
   zstyle -a ":prompt:truncate" show_slash_second_root _show_slash_second_root
   zstyle -a ":prompt:truncate" show_home_second_root _show_home_second_root
+  zstyle -a ":prompt:permission:dir" formats _pdfmt
+  zstyle -s ":prompt:permission:dir" non_owner_symbol _pdsymbol
+  zstyle -a ":prompt:permission:backward" formats _pbfmt
+  zstyle -s ":prompt:permission:backward" non_owner_symbol _pbsymbol
 
   _symbol=${_symbol:-...}
   _max_length=${_max_length:-30}
@@ -99,6 +104,9 @@ promptway () {
 
   _prompt_way="$_prompt_way$_ww"$(_promptway_slash "$WORKING_WAY")
 
+  _wd+=$(_promptway_permission "$PWD" "$_pdfmt" "$_pdsymbol")
+  _bperm=$(_promptway_permission "$BACKWARD_DIR" "$_pbfmt" "$_pbsymbol")
+
   if [[ -n $BACKWARD_UPPER_DIR ]] || [[ -n $BACKWARD_UPPER_WAY ]]; then
     A=$(_promptway_unslash "$BACKWARD_UPPER_DIR")
     if [ -L "$BACKWARD_DIR" ]; then
@@ -113,7 +121,7 @@ promptway () {
     _dir_slash=$(_promptway_slash "$BACKWARD_UPPER_DIR")
     _way_slash=$(_promptway_slash "$BACKWARD_UPPER_WAY")
 
-    _prompt_way="$_prompt_way$_bupd$_dir_slash$_bupw$_way_slash$_wd"
+    _prompt_way="$_prompt_way$_bupd$_bperm$_dir_slash$_bupw$_way_slash$_wd"
 
     if [[ -n $_is_truncate ]] \
       && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
@@ -121,7 +129,7 @@ promptway () {
         "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
         "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
-      _prompt_way="$_prompt_way$_bupd$_dir_slash$_bupw$_way_slash$_wd"
+      _prompt_way="$_prompt_way$_bupd$_bperm$_dir_slash$_bupw$_way_slash$_wd"
     fi
   elif [[ -n $BACKWARD_UNDER_WAY ]] || [[ -n $BACKWARD_UNDER_DIR ]]; then
     A=$(_promptway_unslash "$BACKWARD_UNDER_WAY")
@@ -137,7 +145,7 @@ promptway () {
     _dir_slash=$(_promptway_slash "$WORKING_DIR")
     _way_slash=$(_promptway_slash "$BACKWARD_UNDER_WAY")
 
-    _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd"
+    _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd$_bperm"
     # _prompt_way=$_prompt_way_$(_promptway_slash "$BACKWARD_UNDER_DIR")
 
     if [[ -n $_is_truncate ]] \
@@ -146,7 +154,7 @@ promptway () {
         "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
         "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
-      _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd"
+      _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd$_bperm"
     fi
   else
     _way=$_prompt_way
@@ -160,6 +168,32 @@ promptway () {
   fi
 
   _promptway_backward
+}
+
+_promptway_permission() {
+    local _dir="$1" _fmt="$2" _symbol="$3"
+    local _perm _ret
+    if [[ -z $_dir || -z $_fmt ]]; then
+      return 0
+    fi
+    if [[ -O $_dir ]]; then
+      _symbol=
+    fi
+    if [[ ! -r $_dir ]]; then
+      _perm+='r'
+    fi
+    if [[ ! -w $_dir ]]; then
+      _perm+='w'
+    fi
+    if [[ ! -x $_dir ]]; then
+      _perm+='x'
+    fi
+    _perm="${_perm:+-}$_perm"
+    if [[ -z $_symbol && -z $_perm ]]; then
+      return 0
+    fi
+    zformat -f _ret "$_fmt" "a:$_symbol" "b:$_perm"
+    echo "$_ret"
 }
 
 _promptway_path_length() {
@@ -228,12 +262,14 @@ _promptway_truncate() {
 
 _promptway_backward () {
   _prompt_backward=
-  local _cmd_pathf
-  local -a _is_bwenable _bwdfmt _bwwfmt
+  local _cmd_pathf _pbsymbol _bperm
+  local -a _is_bwenable _bwdfmt _bwwfmt _pbfmt
   zstyle -s "prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:backward" enable _is_bwenable
   zstyle -a ":prompt:backward:dir" formats _bwdfmt
   zstyle -a ":prompt:backward:way" formats _bwwfmt
+  zstyle -a ":prompt:permission:backward" formats _pbfmt
+  zstyle -s ":prompt:permission:backward" non_owner_symbol _pbsymbol
 
   if [[ -z $_is_bwenable ]]; then
     return 0
@@ -257,13 +293,15 @@ _promptway_backward () {
     return 0
   fi
 
+  _bperm=$(_promptway_permission "$BACKWARD_DIR" "$_pbfmt" "$_pbsymbol")
+
   dirname=$("$_cmd_pathf" Bt "$BACKWARD_DIR" | _promptway_filter)
   basename=$("$_cmd_pathf" bt "$BACKWARD_DIR")
   A=$(_promptway_unslash "$dirname")
   zformat -f _budw "$_bwwfmt" a:"$A"
   A=$(_promptway_unslash "$basename")
   zformat -f _budd "$_bwdfmt" a:"$A"
-  _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd
+  _prompt_backward=$_budw$(_promptway_slash "$dirname")$_budd$_bperm
 }
 
 _promptway_filter () {

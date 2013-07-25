@@ -57,6 +57,18 @@ zstyle ":prompt:truncate" show_slash_second_root t
 
 # "~/" 直下のディレクトリを表示する (default: 無効)
 zstyle ":prompt:truncate" show_home_second_root t
+
+## カレントディレクトリの Permission 表示
+# Permission のフォーマット
+zstyle ':prompt:permission:dir' formats '(%F{yellow}%a%b%f)'
+# オーナーが異なる場合に表示されるシンボル
+zstyle ':prompt:permission:dir' non_owner_symbol '⭤'
+
+## 前ディレクトリの Permission 表示
+# Permission のフォーマット
+zstyle ':prompt:permission:backward' formats '(%F{blue}%a%b%f)'
+# オーナーが異なる場合に表示されるシンボル
+zstyle ':prompt:permission:backward' non_owner_symbol '⭤'
 ```
 
 `$_prompt_way` 変数にパス情報が設定されるので、`PROMPT` などに設定して利用します。
