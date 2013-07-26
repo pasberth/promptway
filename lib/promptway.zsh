@@ -36,11 +36,12 @@ promptway () {
   _prompt_way=
   local -a _result
   local -a _wwfmt _wdfmt _wdsymfmt
-  local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt _pdfmt _pbfmt
-  local _cmd_pathf _way _bperm _dir_slash _way_slash \
-    _is_truncate _symbol _max_length \
-    _show_working_parent _show_backward_parent _pdsymbol _pbsymbol \
+  local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
+  local -a _is_truncate _show_working_parent _show_backward_parent \
     _show_slash_second_root _show_home_second_root
+  local -a _pdfmt _pbfmt
+  local _cmd_pathf _way _bperm _dir_slash _way_slash \
+    _symbol _max_length _pdsymbol _pbsymbol
   zstyle -s ":prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:way" formats _wwfmt
   zstyle -a ":prompt:dir" formats _wdfmt
