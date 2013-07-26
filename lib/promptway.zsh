@@ -1,6 +1,6 @@
 # -*- sh -*-
 
-zstyle -s "prompt:pathf" path _cmd_pathf
+zstyle -s ":prompt:pathf" path _cmd_pathf
 if [[ -z $_cmd_pathf ]]; then
   _cmd_pathf=$(whence -p pathf)
   if [[ -z $_cmd_pathf ]]; then
@@ -14,7 +14,7 @@ if [[ -z $_cmd_pathf ]]; then
     fi
     _cmd_pathf="${_cmd_pathf}/../.vendor/pathf/bin/pathf"
   fi
-  zstyle "prompt:pathf" path "$_cmd_pathf"
+  zstyle ":prompt:pathf" path "$_cmd_pathf"
 fi
 
 if ! whence -p "$_cmd_pathf" > /dev/null 2>&1; then
@@ -41,7 +41,7 @@ promptway () {
     _is_truncate _symbol _max_length \
     _show_working_parent _show_backward_parent _pdsymbol _pbsymbol \
     _show_slash_second_root _show_home_second_root
-  zstyle -s "prompt:pathf" path _cmd_pathf
+  zstyle -s ":prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:way" formats _wwfmt
   zstyle -a ":prompt:dir" formats _wdfmt
   zstyle -a ":prompt:dir:symlink" formats _wdsymfmt
@@ -264,7 +264,7 @@ _promptway_backward () {
   _prompt_backward=
   local _cmd_pathf _pbsymbol _bperm
   local -a _is_bwenable _bwdfmt _bwwfmt _pbfmt
-  zstyle -s "prompt:pathf" path _cmd_pathf
+  zstyle -s ":prompt:pathf" path _cmd_pathf
   zstyle -a ":prompt:backward" enable _is_bwenable
   zstyle -a ":prompt:backward:dir" formats _bwdfmt
   zstyle -a ":prompt:backward:way" formats _bwwfmt
