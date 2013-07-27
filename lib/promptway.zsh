@@ -75,22 +75,37 @@ promptway () {
   # b) backward-upper-dir
   # C) backward-under-way
   # c) backward-under-dir
-  local WORKING_WAY BACKWARD_UPPER_DIR BACKWARD_UPPER_WAY WORKING_DIR BACKWARD_UNDER_WAY BACKWARD_UNDER_DIR
+  local WORKING_PATH BACKWARD_UPPER_PATH BACKWARD_UNDER_PATH WORKING_WAY BACKWARD_UPPER_DIR BACKWARD_UPPER_WAY WORKING_DIR BACKWARD_UNDER_WAY BACKWARD_UNDER_DIR
   local A
 
   if [[ -n $_is_bwenable ]] && [[ -n ${dirstack[1]} ]]; then
     BACKWARD_DIR="${dirstack[1]}"
-    BACKWARD_UPPER_DIR=$(echo "$BACKWARD_DIR" | "$_cmd_pathf" Dtb | _promptway_filter)
-    BACKWARD_UPPER_WAY=$(echo "$BACKWARD_DIR" | "$_cmd_pathf" dtB | _promptway_filter)
-    BACKWARD_UNDER_DIR=$(pwd | "$_cmd_pathf" dtb "$BACKWARD_DIR" | _promptway_filter)
-    BACKWARD_UNDER_WAY=$(pwd | "$_cmd_pathf" dtB "$BACKWARD_DIR" | _promptway_filter)
+
+    BACKWARD_UPPER_DIR="$( echo "$BACKWARD_DIR" | "$_cmd_pathf" D )"
+    BACKWARD_UPPER_DIR="${(D)BACKWARD_UPPER_DIR}"
+    BACKWARD_UPPER_DIR="$(basename "$BACKWARD_UPPER_DIR" | _promptway_filter)"
+
+    BACKWARD_UPPER_WAY="$( echo "$BACKWARD_DIR" | "$_cmd_pathf" d )"
+    BACKWARD_UPPER_WAY="${(D)BACKWARD_UPPER_WAY}"
+    BACKWARD_UPPER_WAY="$(dirname "$BACKWARD_UPPER_WAY" | _promptway_filter)"
+
+    BACKWARD_UNDER_PATH="$( pwd | "$_cmd_pathf" d "$BACKWARD_DIR" )"
+    BACKWARD_UNDER_PATH="${(D)BACKWARD_UNDER_PATH}"
+
+    BACKWARD_UNDER_DIR="$( basename "$BACKWARD_UNDER_PATH" | _promptway_filter )"
+    BACKWARD_UNDER_WAY="$( dirname "$BACKWARD_UNDER_PATH" | _promptway_filter )"
   else
     BACKWARD_DIR=
   fi
-  WORKING_DIR=$(echo "$BACKWARD_DIR" | "$_cmd_pathf" D | "$_cmd_pathf" dtb)
-  A=${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}
-  WORKING_WAY=$("$_cmd_pathf" t "$A" | _promptway_filter)
-  WORKING_DIR=$(_promptway_filter "$WORKING_DIR")
+
+  WORKING_DIR="$( echo "$BACKWARD_DIR" | "$_cmd_pathf" D | "$_cmd_pathf" d )"
+  WORKING_DIR="${(D)WORKING_DIR}"
+  WORKING_DIR="$(basename "$WORKING_DIR")"
+  WORKING_WAY="${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}"
+  WORKING_WAY="${WORKING_WAY%%/}"
+  WORKING_WAY="${(D)WORKING_WAY}"
+  WORKING_DIR="$( echo "$WORKING_DIR" | _promptway_filter )"
+  WORKING_WAY="$( echo "$WORKING_WAY" | _promptway_filter )"
 
   local -a _ww _bupd _bupw _wd _budw _budd
 

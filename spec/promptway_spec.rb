@@ -16,6 +16,12 @@ end
 
 describe "promptway.zsh" do
 
+  example "on the current directory" do
+    expect(
+      zsh('promptway; echo $_prompt_way').chomp
+    ).to eq ("{<%s>}/<zdotdir>" % __absdir__)
+  end
+
   example "cd into an under directory" do
     expect(
       zsh('pushd .vim; promptway; echo $_prompt_way').chomp
@@ -56,5 +62,14 @@ describe "promptway.zsh" do
     expect(
       zsh('pushd dotfiles/emacs.d.entity; pushd ..; promptway; echo $_prompt_way').chomp
     ).to eq ("{<%s/zdotdir>}/<dotfiles>/{__}_emacs.d.entity_" % __absdir__)
+  end
+
+  context "on a named directory" do
+
+    example "on the named directory" do
+      expect(
+        zsh('cd named-dir; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}<~named-dir>")
+    end
   end
 end

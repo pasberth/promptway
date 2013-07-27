@@ -8,4 +8,6 @@ zstyle ':prompt:backward:dir' formats "_%a_"
 zstyle ':prompt:backward:dir:symlink' formats "_%a@_"
 zstyle ':prompt:backward:way' formats "{_%a_}"
 
+hash -d named-dir=$ZDOTDIR/named-dir
+
 cd $ZDOTDIR
