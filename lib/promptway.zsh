@@ -102,7 +102,10 @@ promptway () {
   WORKING_DIR="${(D)WORKING_DIR}"
   WORKING_DIR="$(basename "$WORKING_DIR")"
   WORKING_WAY="${PWD%%$(eval echo "$BACKWARD_UPPER_DIR$BACKWARD_UPPER_WAY$WORKING_DIR")}"
-  WORKING_WAY="${WORKING_WAY%%/}"
+
+  if [[ $WORKING_WAY != / ]] ; then
+    WORKING_WAY="${WORKING_WAY%%/}"
+  fi
   WORKING_WAY="${(D)WORKING_WAY}"
   WORKING_DIR="$( echo "$WORKING_DIR" | _promptway_filter )"
   WORKING_WAY="$( echo "$WORKING_WAY" | _promptway_filter )"
