@@ -128,11 +128,9 @@ popd コマンドで戻るディレクトリのフォーマットです。 *%a* 
 
 #### :prompt:way
 
-ルートディレクトリと、*:prompt:dir* または *:prompt:backward:dir* の間のパスです。
+ルートディレクトリと、 *:prompt:dir* または *:prompt:backward:dir* の間のパスです。
 直感的に説明すると、ルートディレクトリと *:prompt:dir* の間のパスであるが、
 もし *遮られているなら* ルートディレクトリと *:prompt:backward:dir* の間のパスです。
-*:prompt:dir* と *:prompt:backward:dir* のうち、高い位置にある
-*%a* にパスの情報が入ります。
 
 ![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-way.png)
 
