@@ -53,6 +53,9 @@ zstyle ":prompt:truncate" show_slash_second_root ""
 # "~/" 直下のディレクトリを表示する (default: 無効)
 zstyle ":prompt:truncate" show_home_second_root ""
 
+# 名前付きディレクトリ直下のディレクトリを表示する (default: 無効)
+zstyle ':prompt:truncate' show_named_dir_second_root ""
+
 ## Permissions of the current directory
 # Format of permissions
 zstyle ':prompt:permission:dir' formats ""

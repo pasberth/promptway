@@ -38,7 +38,7 @@ promptway () {
   local -a _wwfmt _wdfmt _wdsymfmt
   local -a _is_bwenable _bwdfmt _bwwfmt _bwdsymfmt
   local -a _is_truncate _show_working_parent _show_backward_parent \
-    _show_slash_second_root _show_home_second_root
+    _show_slash_second_root _show_home_second_root _show_named_dir_second_root
   local -a _pdfmt _pbfmt
   local _cmd_pathf _way _bperm _dir_slash _way_slash \
     _symbol _max_length _pdsymbol _pbsymbol
@@ -57,6 +57,7 @@ promptway () {
   zstyle -a ":prompt:truncate" show_backward_parent _show_backward_parent
   zstyle -a ":prompt:truncate" show_slash_second_root _show_slash_second_root
   zstyle -a ":prompt:truncate" show_home_second_root _show_home_second_root
+  zstyle -a ":prompt:truncate" show_named_dir_second_root _show_named_dir_second_root
   zstyle -a ":prompt:permission:dir" formats _pdfmt
   zstyle -s ":prompt:permission:dir" non_owner_symbol _pdsymbol
   zstyle -a ":prompt:permission:backward" formats _pbfmt
@@ -145,9 +146,11 @@ promptway () {
     if [[ -n $_is_truncate ]] \
       && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
       _bupw=$(_promptway_truncate "$_bupw" "$_symbol" \
-        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
+        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root" \
+        "$_show_named_dir_second_root")
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
-        "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
+        "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root" \
+        "$_show_named_dir_second_root")
       _prompt_way="$_prompt_way$_bupd$_bperm$_dir_slash$_bupw$_way_slash$_wd"
     fi
   elif [[ -n $BACKWARD_UNDER_WAY ]] || [[ -n $BACKWARD_UNDER_DIR ]]; then
@@ -170,9 +173,11 @@ promptway () {
     if [[ -n $_is_truncate ]] \
       && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
       _budw=$(_promptway_truncate "$_budw" "$_symbol" \
-        "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root")
+        "$_show_backward_parent" "$_show_slash_second_root" "$_show_home_second_root" \
+        "$_show_named_dir_second_root")
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
-        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
+        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root" \
+        "$_show_named_dir_second_root")
       _prompt_way="$_prompt_way$_wd$_dir_slash$_budw$_way_slash$_budd$_bperm"
     fi
   else
@@ -181,7 +186,8 @@ promptway () {
     if [[ -n $_is_truncate ]] \
       && _promptway_is_max_length_over "$_prompt_way" "$_max_length"; then
       _prompt_way=$(_promptway_truncate "$_way" "$_symbol" \
-        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root")
+        "$_show_working_parent" "$_show_slash_second_root" "$_show_home_second_root" \
+        "$_show_named_dir_second_root")
       _prompt_way="$_prompt_way$_wd"
     fi
   fi
@@ -240,6 +246,7 @@ _promptway_truncate() {
   local show_base="$3"
   local show_slash_root="$4"
   local show_home_root="$5"
+  local show_named_dir_root="$6"
 
   local prefix suffix
 
@@ -254,10 +261,17 @@ _promptway_truncate() {
   elif [[ $_path != ${_path#\~/} ]]; then
     prefix='~/'
     _path=${_path#\~/}
+  elif [[ $_path != ${_path#\~*/} ]]; then
+    prefix="${_path%%/*}/"
+    _path=${_path#\~*/}
+  elif [[ $_path != ${_path#\~} ]]; then
+    prefix="$_path"
+    _path=
   fi
 
   if [[ -n $show_slash_root && $prefix == '/' \
-    || -n $show_home_root && $prefix == '~/'  ]]; then
+    || -n $show_home_root && $prefix == '~/'  \
+    || -n $show_named_dir_root && $prefix =~ '^~[^/]' ]]; then
     if [[ $_path =~ '/' ]]; then
       prefix+="${_path%%/*}/"
       _path=${_path#*/}
