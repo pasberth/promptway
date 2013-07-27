@@ -311,8 +311,9 @@ _promptway_backward () {
 
   _bperm=$(_promptway_permission "$BACKWARD_DIR" "$_pbfmt" "$_pbsymbol")
 
-  dirname=$("$_cmd_pathf" Bt "$BACKWARD_DIR" | _promptway_filter)
-  basename=$("$_cmd_pathf" bt "$BACKWARD_DIR")
+  BACKWARD_DIR="${(D)BACKWARD_DIR}"
+  dirname="$( dirname "$BACKWARD_DIR" | _promptway_filter )"
+  basename="$( basename "$BACKWARD_DIR" )"
   A=$(_promptway_unslash "$dirname")
   zformat -f _budw "$_bwwfmt" a:"$A"
   A=$(_promptway_unslash "$basename")
