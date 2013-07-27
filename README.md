@@ -78,6 +78,7 @@ setopt prompt_subst
 PROMPT='$_prompt_way'
 ```
 
+
 たとえば `~/Documents` から `~/Downloads` に移動した場合、 `$_prompt_backward` に情報が入ります。つまり `~/Documents` に `popd` で戻れるディレクトリの位置が保存されます。
 
 ![Demo](https://raw.github.com/pasberth/promptway/master/demo/promptbackward.png)
@@ -95,3 +96,61 @@ function _print_promptway () {
   fi
 }
 ```
+
+
+## Settings
+
+### enable
+
+#### :prompt:backward
+
+popd コマンドで戻るディレクトリを表示するか否か。
+表示するなら非空文字を、表示しないなら空文字を設定します。
+典型的に真偽を `"t"` または `""` で表します。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-backward-enable.png)
+
+
+### formats
+
+#### :prompt:dir
+
+カレントディレクトリのフォーマットです。 *%a* にパスの情報が入ります。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-dir.png)
+
+#### :prompt:backward:dir
+
+popd コマンドで戻るディレクトリのフォーマットです。 *%a* にパスの情報が入ります。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-backward-dir.png)
+
+
+#### :prompt:way
+
+ルートディレクトリと、*:prompt:dir* または *:prompt:backward:dir* の間のパスです。
+直感的に説明すると、ルートディレクトリと *:prompt:dir* の間のパスであるが、
+もし *遮られているなら* ルートディレクトリと *:prompt:backward:dir* の間のパスです。
+*:prompt:dir* と *:prompt:backward:dir* のうち、高い位置にある
+*%a* にパスの情報が入ります。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-way.png)
+
+#### :prompt:backward:way
+
+*:prompt:backward:dir* と *:prompt:dir* の間のパスです。
+*%a* にパスの情報が入ります。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-backward-way.png)
+
+#### :prompt:dir:symlink
+
+シンボリックリンクであるカレントディレクトリのフォーマットです。 *%a* にパスの情報が入ります。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-dir-symlink.png)
+
+#### :prompt:backward:dir:symlink
+
+シンボリックリンクであるpopd コマンドで戻るディレクトリのフォーマットです。 *%a* にパスの情報が入ります。
+
+![Demo](https://raw.github.com/pasberth/promptway/master/demo/prompt-backward-dir-symlink.png)
