@@ -71,5 +71,41 @@ describe "promptway.zsh" do
         zsh('cd named-dir; promptway; echo $_prompt_way').chomp
       ).to eq ("{<>}<~named-dir>")
     end
+
+    example "cd into a under directory" do
+      expect(
+        zsh('cd named-dir; pushd path; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}_~named-dir_/{__}<path>")
+    end
+
+    example "cd into a under under directory" do
+      expect(
+        zsh('cd named-dir; pushd path/to; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}_~named-dir_/{_path_}/<to>")
+    end
+
+    example "cd into a under named directory" do
+      expect(
+        zsh('cd named-dir; pushd path/to/under-named-dir; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}_~named-dir_/{_path/to_}/<under-named-dir>")
+    end
+
+    example "cd into a under directory and return to the parent directory" do
+      expect(
+        zsh('cd named-dir; pushd path; pushd ..; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}<~named-dir>/{__}_path_")
+    end
+
+    example "cd into a under under directory and return to the parent directory" do
+      expect(
+        zsh('cd named-dir; pushd path/to; pushd ../..; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}<~named-dir>/{_path_}/_to_")
+    end
+
+    example "cd into a under named directory and return to the parent directory" do
+      expect(
+        zsh('cd named-dir; pushd path/to/under-named-dir; pushd ../../..; promptway; echo $_prompt_way').chomp
+      ).to eq ("{<>}<~named-dir>/{_path/to_}/_under-named-dir_")
+    end
   end
 end
